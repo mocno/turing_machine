@@ -35,7 +35,7 @@ class Tape:
         self.black_symbol = black_symbol
         self.position = position
 
-    def __getitem__(self, position):
+    def __getitem__(self, position: int):
         if position in self.tape:
             return self.tape[position]
 
@@ -47,25 +47,30 @@ class Tape:
     def __str__(self):
         return ''.join(self[position] for position in range(min(self.tape.keys()) - 2, max(self.tape.keys()) +3)) + '\n' + (self.position - min(self.tape.keys()) + 2) * ' ' + '^'
 
-    def run(self, tm: TuringMachine):
+    def run(self, turing_machine_config: TuringMachine):
+        steps = 0
         while True:
-            instruction = tm.step(self[self.position])
+            steps += 1
+            instruction = turing_machine_config.step(self[self.position])
 
+            print(turing_machine_config.current_state)
             print(self)
 
             if instruction is None:
-                break
-            elif len(instruction) == 1:
+                print("steps:", steps)
+                return True
+
+            if len(instruction) == 1:
                 _dir, *_ = instruction
             elif len(instruction) == 2:
                 _dir, new_state, *_ = instruction
-                tm.set_state(new_state)
+                turing_machine_config.set_state(new_state)
             elif len(instruction) == 3:
                 _dir, new_state, write = instruction
                 self[self.position] = write
-                tm.set_state(new_state)
+                turing_machine_config.set_state(new_state)
             else:
-                break
+                return False
 
             if _dir == "L":
                 self.position -= 1
@@ -74,15 +79,15 @@ class Tape:
 
 
 def read_json_machine_config(filepath):
-    with open(filepath, 'r') as f:
-        data = f.read()
+    with open(filepath, 'r', encoding='utf-8') as file:
+        data = file.read()
 
     try:
         data = json.loads(data)
     except json.decoder.JSONDecodeError:
         return None, None
 
-    tm = TuringMachine(
+    turing_machine_config = TuringMachine(
         data['start-state'],
         data['all-symbols'],
         data['states'],
@@ -99,4 +104,4 @@ def read_json_machine_config(filepath):
 
         tapes.append(tape)
 
-    return tm, tapes
+    return turing_machine_config, tapes
