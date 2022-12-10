@@ -1,8 +1,7 @@
 {
     "start-state": "right",
-    "black-symbol": " ",
+    "blank-symbol": " ",
     "else-sign": "*",
-    "all-symbols": "10 ",
 
     "states": {
         "right": {
