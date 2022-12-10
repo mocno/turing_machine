@@ -1,9 +1,16 @@
-import turing
+"""This is a cli of a turing machine, with a simple tape or a '2d tape'"""
+
 import argparse
 from pathlib import Path
+import turing
+from turing.errors import JSONDecodeError, TapeIndexError, UnexpectedState
 
 def cli():
-    parser = argparse.ArgumentParser()
+    """This is a cli function of a turing machine, with a simple tape or a '2d tape'"""
+
+    parser = argparse.ArgumentParser(
+        description='Simulate a turing machine, with a simple tape or a "2d tape"')
+
     parser.add_argument("path", help="Path of json file")
     parser.add_argument("index", help="Index tape", type=int)
     args = parser.parse_args()
@@ -13,17 +20,16 @@ def cli():
     if not target_dir.exists():
         parser.exit(1, message="The target directory doesn't exist")
 
-    tm, tapes = turing.read_json_machine_config(args.path)
-
-    if tapes is not None and tm is not None:
-        if args.index < len(tapes):
-            run_ok = tapes[args.index].run(tm)
-            if not run_ok:
-                parser.exit(1, message=f"Unexpected value in instructions")
-        else:
-            parser.exit(1, message=f"This file has {len(tapes)} tapes try an index lower than that")
-    else:
+    try:
+        machine = turing.parse_json_machine(args.path)
+    except (JSONDecodeError, UnexpectedState):
         parser.exit(1, message="The target directory has some error")
+
+    try:
+        machine.run(args.index)
+    except TapeIndexError:
+        parser.exit(1, message=
+        f"This file has {len(machine.tapes)} tapes try an index lower than that")
 
 if __name__ == "__main__":
     cli()
