@@ -6,8 +6,5 @@ class JSONDecodeError(ValueError):
 class UnexpectedState(ValueError):
     """Unexpected state, state out of states"""
 
-class TapeIndexError(IndexError):
-    """Tape not found"""
-
 class UnexpectedDirection(ValueError):
     """Unexpected direction, instruction with some direction error"""

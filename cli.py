@@ -2,8 +2,8 @@
 
 import argparse
 from pathlib import Path
-import turing
-from turing.errors import JSONDecodeError, TapeIndexError, UnexpectedState
+import turing2
+from turing2 import JSONDecodeError, UnexpectedState
 
 def cli():
     """This is a cli function of a turing machine, with a simple tape or a '2d tape'"""
@@ -26,10 +26,16 @@ def cli():
         parser.exit(1, message="The target directory has some error")
 
     try:
-        machine.run(args.index)
-    except TapeIndexError:
+        tape = machine.tapes[args.index]
+    except IndexError:
         parser.exit(1, message=
-        f"This file has {len(machine.tapes)} tapes try an index lower than that")
+            f"This file has {len(machine.tapes)} tapes try an index lower than that")
+
+    while True:
+        _continue = machine.step(tape)
+
+        if not _continue:
+            break
 
 if __name__ == "__main__":
     cli()
