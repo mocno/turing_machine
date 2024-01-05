@@ -168,7 +168,7 @@ class Tape2d(TapeMixin):
 
         for i, line in enumerate(tape):
             for j, cell in enumerate(line):
-                self[np.array((i, j), np.int_)] = cell
+                self[np.array((j, i), np.int_)] = cell
 
     def __repr__(self) -> str:
         cls = self.__class__
