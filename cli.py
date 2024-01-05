@@ -1,11 +1,14 @@
 """This is a cli of a turing machine, with a simple tape or a '2d tape'"""
 
 import argparse
+import time
 from pathlib import Path
 
 import turing
 from turing import JSONDecodeError, UnexpectedState
 
+ERASE_LINE = '\033[2K'
+CURSOR_UP = '\033[F'
 
 def cli():
     """This is a cli function of a turing machine, with a simple tape or a '2d tape'"""
@@ -13,8 +16,10 @@ def cli():
     parser = argparse.ArgumentParser(
         description='Simulate a turing machine, with a simple tape or a "2d tape"')
 
-    parser.add_argument("path", help="Path of json file")
+    parser.add_argument("path",
+        help="Path of json file. For more information, you can see the README and the examples")
     parser.add_argument("index", help="Index tape", type=int)
+    parser.add_argument("-d", "--delay", help="Delay in each step", type=float, default=.3)
     args = parser.parse_args()
 
     target_dir = Path(args.path)
@@ -25,7 +30,7 @@ def cli():
     try:
         machine = turing.parse_json_machine(args.path)
     except JSONDecodeError:
-        parser.exit(1, message="The target directory has some error")
+        parser.exit(1, message="The target file has some error")
     except UnexpectedState as e:
         parser.exit(1, message=f"Unexpected start state: {e}")
 
@@ -38,8 +43,19 @@ def cli():
     while True:
         _continue = machine.step(tape)
 
+        if tape.type == 'tape':
+            print(ERASE_LINE + machine.state)
+            print(ERASE_LINE)
+            print(str(tape) + CURSOR_UP * 2)
+        elif tape.type == '2d':
+            print(ERASE_LINE + machine.state)
+            print(ERASE_LINE)
+            print(str(tape) + CURSOR_UP * (2+str(tape).count('\n')))
+
         if not _continue:
             break
+
+        time.sleep(args.delay)
 
 if __name__ == "__main__":
     cli()

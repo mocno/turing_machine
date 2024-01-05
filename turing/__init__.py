@@ -81,7 +81,10 @@ class Instruction:
 
 
 class TapeMixin:
+    """Generic form to tapes classes"""
     DIRECTIONS: dict[str, PositionType] = {}
+
+    type: str
 
     position: PositionType
 
@@ -105,6 +108,8 @@ class TapeMixin:
 class Tape(TapeMixin):
     """The tape of turing machine"""
 
+    type = 'tape'
+
     DIRECTIONS = {
         'R': +1,
         'L': -1
@@ -118,14 +123,18 @@ class Tape(TapeMixin):
         self.position = position
         self.blank_symbol = blank_symbol
 
+    def __str__(self) -> str:
+        min_position = min(self.tape)
+        max_position = max(self.tape)
+
+        return ''.join(self[pos]
+                       for pos in range(min_position, max_position+1))
+
     def __repr__(self) -> str:
         cls = self.__class__
 
         min_position = min(self.tape)
-        max_position = max(self.tape)
-
-        tape = ''.join(self[pos]
-                       for pos in range(min_position, max_position+1))
+        tape = str(self)
 
         content = [repr(tape)]
         if self.position != min_position:
@@ -150,6 +159,8 @@ class Tape(TapeMixin):
 
 class Tape2d(TapeMixin):
     """The tape of turing machine"""
+
+    type = '2d'
 
     DIRECTIONS = {
         'R': np.array((1,  0), np.int_),
