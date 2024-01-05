@@ -154,40 +154,22 @@
 
     "inputs": [
         {
-            "tape": "1+1",
-            "steps-1-bit": 14,
-            "steps-2-bits": 14,
-            "steps-3-bits": 14
+            "tape": "1+1"
         },
         {
-            "tape": "11+11",
-            "steps-1-bit": 28,
-            "steps-2-bits": 20,
-            "steps-3-bits": 20
+            "tape": "11+11"
         },
         {
-            "tape": "1011+1001",
-            "steps-1-bit": 66,
-            "steps-2-bits": 44,
-            "steps-3-bits": 42
+            "tape": "1011+1001"
         },
         {
-            "tape": "101+1001",
-            "steps-1-bit": 62,
-            "steps-2-bits": 40,
-            "steps-3-bits": 40
+            "tape": "101+1001"
         },
         {
-            "tape": "1011+101",
-            "steps-1-bit": 49,
-            "steps-2-bits": 39,
-            "steps-3-bits": 29
+            "tape": "1011+101"
         },
         {
-            "tape": "101+1010101111",
-            "steps-1-bit": 266,
-            "steps-2-bit": 154,
-            "steps-3-bit": 128
+            "tape": "101+1010101111"
         }
     ]
 }
