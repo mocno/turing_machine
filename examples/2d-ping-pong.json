@@ -1,0 +1,107 @@
+{
+    "type": "2d",
+    "start-state": "go(DR,verify=DR)",
+    "blank-symbol": " ",
+
+    "states": {
+        "go(UR,verify=UR)": {
+            " o": ["R", "test(R,d=UR,verify=U)", "o"]
+        },
+        "go(DR,verify=DR)": {
+            " o": ["R", "test(R,d=DR,verify=D)", "o"]
+        },
+        "go(DL,verify=DL)": {
+            " o": ["L", "test(L,d=DL,verify=D)", "o"]
+        },
+        "go(UL,verify=UL)": {
+            " o": ["L", "test(L,d=UL,verify=U)", "o"]
+        },
+
+        "go(UR,verify=U)": {
+            "o": ["U", "test(U,d=UR)"]
+        },
+        "go(DR,verify=D)": {
+            "o": ["D", "test(D,d=DR)"]
+        },
+        "go(UL,verify=U)": {
+            "o": ["U", "test(U,d=UL)"]
+        },
+        "go(DL,verify=D)": {
+            "o": ["D", "test(D,d=DL)"]
+        },
+
+        "go(UR)": {
+            "o": ["R", "go(U,d=UR)", " "]
+        },
+        "go(DR)": {
+            "o": ["R", "go(D,d=DR)", " "]
+        },
+        "go(UL)": {
+            "o": ["L", "go(U,d=UL)", " "]
+        },
+        "go(DL)": {
+            "o": ["L", "go(D,d=DL)", " "]
+        },
+
+        "go(U,d=UR)": {
+            " ": ["U", "go(UR,verify=UR)"]
+        },
+        "go(D,d=DR)": {
+            " ": ["D", "go(DR,verify=DR)"]
+        },
+        "go(U,d=UL)": {
+            " ": ["U", "go(UL,verify=UL)"]
+        },
+        "go(D,d=DL)": {
+            " ": ["D", "go(DL,verify=DL)"]
+        },
+
+        "test(R,d=UR,verify=U)": {
+            "x": ["L", "go(UL,verify=UL)"],
+            " ": ["L", "go(UR,verify=U)"]
+        },
+        "test(R,d=DR,verify=D)": {
+            "x": ["L", "go(DL,verify=DL)"],
+            " ": ["L", "go(DR,verify=D)"]
+        },
+        "test(L,d=DL,verify=D)": {
+            "x": ["R", "go(DR,verify=DR)"],
+            " ": ["R", "go(DL,verify=D)"]
+        },
+        "test(L,d=UL,verify=U)": {
+            "x": ["R", "go(UR,verify=UR)"],
+            " ": ["R", "go(UL,verify=U)"]
+        },
+
+        "test(U,d=UR)": {
+            "x": ["D", "go(DR,verify=DR)"],
+            " ": ["D", "go(UR)"]
+        },
+        "test(D,d=DR)": {
+            "x": ["U", "go(UR,verify=UR)"],
+            " ": ["U", "go(DR)"]
+        },
+        "test(U,d=UL)": {
+            "x": ["D", "go(DL,verify=DL)"],
+            " ": ["D", "go(UL)"]
+        },
+        "test(D,d=DL)": {
+            "x": ["U", "go(UL,verify=UL)"],
+            " ": ["U", "go(DL)"]
+        }
+    },
+
+    "inputs": [
+        {
+            "tape": [
+                "xxxxx",
+                "x   x",
+                "x o x",
+                "x   x",
+                "x   x",
+                "xxxxx"
+            ],
+            "position": [2, 2]
+        }
+    ]
+}
