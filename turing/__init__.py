@@ -1,10 +1,12 @@
 """Simulates a turing machine, with a simple tape or a '2d tape'"""
 
+import json
+from typing import Any, List
+
 import numpy as np
 import numpy.typing as npt
-from typing import List, Any
-import json
-from .errors import JSONDecodeError, UnexpectedState, UnexpectedDirection
+
+from .errors import JSONDecodeError, UnexpectedDirection, UnexpectedState
 
 PositionInputType = List[int] | int
 PositionType = npt.NDArray[np.int_] | int
@@ -171,7 +173,7 @@ class Tape2d(TapeMixin):
     def __repr__(self) -> str:
         cls = self.__class__
 
-        content = ['"..."']
+        content = [repr(self.tape)]
         if (self.position != 0).any():
             content.append(str(self.position))
         if self.blank_symbol != ' ':
@@ -180,7 +182,8 @@ class Tape2d(TapeMixin):
         return f"{cls.__name__}({', '.join(content)})"
 
     def __getitem__(self, position: npt.NDArray[np.int_]):
-        str_position = str(position)[1:-1]
+        # str_position = str(position)[1:-1]
+        str_position = f"{position[0]} {position[1]}"
 
         if str_position in self.tape:
             return self.tape[str_position]
@@ -188,13 +191,29 @@ class Tape2d(TapeMixin):
         return self.blank_symbol
 
     def __setitem__(self, position: npt.NDArray[np.int_], value):
-        str_position = str(position)[1:-1]
+        # str_position = str(position)[1:-1]
+        str_position = f"{position[0]} {position[1]}"
 
         if value == self.blank_symbol:
             if str_position in self.tape:
                 del self.tape[str_position]
         else:
             self.tape[str_position] = value
+
+    def __str__(self):
+        all_cords = tuple(cord.split(' ') for cord in self.tape)
+        x_cords = [int(cord[0]) for cord in all_cords]
+
+        y_cords = [int(cord[1]) for cord in all_cords]
+        y_cords = np.arange(min(y_cords, default=0), max(y_cords, default=0)+1, 1)
+
+        str_tape = ''
+        for y in y_cords:
+            for i in range(min(x_cords, default=0), max(x_cords, default=0)+1):
+                str_tape += self[np.array((i, y), np.int_)]
+            str_tape += '\n'
+
+        return str_tape
 
 
 class MachineConfiguration:
