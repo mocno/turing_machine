@@ -118,6 +118,23 @@
                 "xxxxxxxxxxxxxxxx"
             ],
             "position": [2, 2]
+        },
+        {
+            "tape": [
+                "xxxxxxxxxxxxxxxx",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "x              x",
+                "xxxxxxxxxxxxxxxx"
+            ],
+            "position": [5, 5]
         }
     ]
 }
