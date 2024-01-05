@@ -2,8 +2,10 @@
 
 import argparse
 from pathlib import Path
-import turing2
-from turing2 import JSONDecodeError, UnexpectedState
+
+import turing
+from turing import JSONDecodeError, UnexpectedState
+
 
 def cli():
     """This is a cli function of a turing machine, with a simple tape or a '2d tape'"""
@@ -22,8 +24,10 @@ def cli():
 
     try:
         machine = turing.parse_json_machine(args.path)
-    except (JSONDecodeError, UnexpectedState):
+    except JSONDecodeError:
         parser.exit(1, message="The target directory has some error")
+    except UnexpectedState as e:
+        parser.exit(1, message=f"Unexpected start state: {e}")
 
     try:
         tape = machine.tapes[args.index]
