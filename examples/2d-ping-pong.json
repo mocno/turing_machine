@@ -5,16 +5,20 @@
 
     "states": {
         "go(UR,verify=UR)": {
-            " o": ["R", "test(R,d=UR,verify=U)", "o"]
+            " o": ["R", "test(R,d=UR,verify=U)", "o"],
+            "x": ["D", "go(DR,verify=DR)"]
         },
         "go(DR,verify=DR)": {
-            " o": ["R", "test(R,d=DR,verify=D)", "o"]
-        },
-        "go(DL,verify=DL)": {
-            " o": ["L", "test(L,d=DL,verify=D)", "o"]
+            " o": ["R", "test(R,d=DR,verify=D)", "o"],
+            "x": ["U", "go(UR,verify=UR)"]
         },
         "go(UL,verify=UL)": {
-            " o": ["L", "test(L,d=UL,verify=U)", "o"]
+            " o": ["L", "test(L,d=UL,verify=U)", "o"],
+            "x": ["D", "go(DL,verify=DL)"]
+        },
+        "go(DL,verify=DL)": {
+            " o": ["L", "test(L,d=DL,verify=D)", "o"],
+            "x": ["U", "go(UL,verify=UL)"]
         },
 
         "go(UR,verify=U)": {
@@ -96,10 +100,22 @@
             "tape": [
                 "xxxxx",
                 "x   x",
-                "x o x",
+                "x   x",
                 "x   x",
                 "x   x",
                 "xxxxx"
+            ],
+            "position": [2, 2]
+        },
+        {
+            "tape": [
+                "xxxxxxxxxxxxxxxx",
+                "x         x    x",
+                "x         x    x",
+                "x         x    x",
+                "x   x          x",
+                "x   x          x",
+                "xxxxxxxxxxxxxxxx"
             ],
             "position": [2, 2]
         }
