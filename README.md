@@ -107,7 +107,7 @@ O `blank-symbol` define o carácter vazio da fita, e tem como valor padrão: " "
 }
 ```
 
-### `else-sign`
+#### `else-sign`
 o `else-sign` funciona como um caracter que representa todos os outros não configurados.
 Nos exemplos, como caracter padrão, foi usado o simbolo `*`. Definido pela seguinte forma:
 
