@@ -86,7 +86,8 @@ class TapeMixin:
 
     type: str
 
-    position: PositionType
+    def __init__(self, position: PositionType) -> None:
+        self.position = position
 
     def read_pointer(self) -> str:
         """Read the tape head char"""
@@ -119,8 +120,9 @@ class Tape(TapeMixin):
         if position is None:
             position = 0
 
+        super().__init__(int(position))
+
         self.tape = dict(zip(range(len(tape)), tape))
-        self.position = position
         self.blank_symbol = blank_symbol
 
     def __str__(self) -> str:
@@ -169,12 +171,14 @@ class Tape2d(TapeMixin):
         'U': np.array((0, -1), np.int_)
     }
 
-    def __init__(self, tape: list[str], position: List[int] | None = None, blank_symbol: str = ' ') -> None:
+    def __init__(self, tape: list[str], position: List[int] | None = None,
+                 blank_symbol: str = ' ') -> None:
+
         self.tape = {}
         if position is None:
-            self.position: npt.NDArray[np.int_] = np.zeros((2), np.int_)
+            super().__init__(np.zeros((2), np.int_))
         else:
-            self.position: npt.NDArray[np.int_] = np.array(position)
+            super().__init__(np.array(position))
         self.blank_symbol = blank_symbol
 
         for i, line in enumerate(tape):
@@ -310,7 +314,7 @@ def parse_json_machine(filepath: str, encoding: str = "utf-8") -> Machine:
 
 def _generate_tape(_type, tape, position: PositionInputType|None, blank_symbol: str) -> TapeMixin:
     if _type == '2d':
-        if isinstance(position, int):
+        if isinstance(position, str):
             raise TypeError("Unexpected position got int, expected List[int]")
         return Tape2d(tape, position, blank_symbol)
     return Tape(tape, position, blank_symbol)
