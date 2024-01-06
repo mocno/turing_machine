@@ -8,3 +8,6 @@ class UnexpectedState(ValueError):
 
 class UnexpectedDirection(ValueError):
     """Unexpected direction, instruction with some direction error"""
+
+class UnexpectedType(ValueError):
+    """Unexpected type in configuration of machine"""

@@ -1,62 +1,66 @@
 """Simulates a turing machine, with a simple tape or a '2d tape'"""
 
 import json
-from typing import Any, List
+from typing import List, Optional, Union
 
 import numpy as np
-import numpy.typing as npt
 
-from .errors import JSONDecodeError, UnexpectedDirection, UnexpectedState
+from .errors import (JSONDecodeError, UnexpectedDirection, UnexpectedState,
+                     UnexpectedType)
+from .types import (DirectionType, InstructionInputType,
+                    MachineConfigurationType, Position2dInputType,
+                    Position2dType, PositionTapeInputType, StatesInputType,
+                    StateType, SymbolType, TapeType2dType, TapeTypeTapeType)
 
-PositionInputType = List[int] | int
-PositionType = npt.NDArray[np.int_] | int
 
-def generate_machine_from_dict(data: dict[str, Any]):
+def generate_machine_from_dict(data: MachineConfigurationType):
     """Generate a turing machine by dict"""
 
-    states = data['states']
     start_state = data['start-state']
     else_sign = data.get('else-sign', None)
+    states = data['states']
 
     configuration = MachineConfiguration(states, start_state, else_sign)
 
     blank_symbol = data.get('blank-symbol', ' ')
 
-    try:
-        inputs: List[dict[str, str|List[int]]] = data['inputs']
-    except KeyError:
-        return Machine(configuration, [])
-
-    tapes: List[TapeMixin] = []
-
-    # types: tape, 2d, graph
     _type = data.get('type', 'tape')
 
-    for _input in inputs:
-        value = _input['tape']
-        position: PositionInputType|None = _input.get('position')
-        tape = _generate_tape(_type, value, position, blank_symbol)
+    inputs = data['inputs']
 
-        tapes.append(tape)
+    if _type == 'tape':
+        tapes = [
+            Tape(_input['tape'], _input.get('position'), blank_symbol)
+            for _input in inputs
+        ]
+    elif _type == '2d':
+        tapes = [
+            Tape2d(_input['tape'], _input.get('position'), blank_symbol)
+            for _input in inputs
+        ]
+    else:
+        raise UnexpectedType("Unexpected type of machine")
 
     return Machine(configuration, tapes)
 
 class Instruction:
     """The Instruction of turing machine"""
 
-    def __init__(self, data: List[int|str] | None = None):
-        self.direction = None
-        self.new_state: str|None = None
+    def __init__(self, data: Optional[InstructionInputType] = None):
+        self.direction: Optional[DirectionType] = None
+        self.new_state: Optional[StateType] = None
         self.write = None
         if data is not None:
-            if len(data) == 1:
+            if isinstance(data, str):
+                self.direction = data
+            elif len(data) == 1:
                 self.direction = data[0]
             elif len(data) == 2:
                 self.direction = data[0]
-                self.new_state = str(data[1])
+                self.new_state = data[1]
             elif len(data) == 3:
                 self.direction = data[0]
-                self.new_state = str(data[1])
+                self.new_state = data[1]
                 self.write     = data[2]
             else:
                 raise ValueError("Not expected instruction")
@@ -80,33 +84,7 @@ class Instruction:
         return self.direction is None and self.new_state is None and self.write is None
 
 
-class TapeMixin:
-    """Generic form to tapes classes"""
-    DIRECTIONS: dict[str, PositionType] = {}
-
-    type: str
-
-    def __init__(self, position: PositionType) -> None:
-        self.position = position
-
-    def read_pointer(self) -> str:
-        """Read the tape head char"""
-
-        return self[self.position]
-
-    def do_instruction(self, instruction: Instruction):
-        """Execute an instruction of turing machine"""
-
-        if instruction.write is not None:
-            self[self.position] = instruction.write
-
-        if instruction.direction not in self.DIRECTIONS:
-            raise UnexpectedDirection(f"Unexpected direction: \"{instruction.direction}\"")
-
-        self.position += self.DIRECTIONS[instruction.direction]
-
-
-class Tape(TapeMixin):
+class Tape:
     """The tape of turing machine"""
 
     type = 'tape'
@@ -116,12 +94,12 @@ class Tape(TapeMixin):
         'L': -1
     }
 
-    def __init__(self, tape: str, position: int|None = None, blank_symbol: str = ' ') -> None:
+    def __init__(self, tape: TapeTypeTapeType, position: Optional[PositionTapeInputType] = None,
+                 blank_symbol: SymbolType = ' ') -> None:
         if position is None:
             position = 0
 
-        super().__init__(int(position))
-
+        self.position = int(position)
         self.tape = dict(zip(range(len(tape)), tape))
         self.blank_symbol = blank_symbol
 
@@ -158,8 +136,24 @@ class Tape(TapeMixin):
         else:
             self.tape[position] = value
 
+    def read_pointer(self) -> str:
+        """Read the tape head char"""
 
-class Tape2d(TapeMixin):
+        return self[self.position]
+
+    def do_instruction(self, instruction: Instruction):
+        """Execute an instruction of turing machine"""
+
+        if instruction.write is not None:
+            self[self.position] = instruction.write
+
+        if instruction.direction not in self.DIRECTIONS:
+            raise UnexpectedDirection(f"Unexpected direction: \"{instruction.direction}\"")
+
+        self.position += self.DIRECTIONS[instruction.direction]
+
+
+class Tape2d:
     """The tape of turing machine"""
 
     type = '2d'
@@ -171,14 +165,14 @@ class Tape2d(TapeMixin):
         'U': np.array((0, -1), np.int_)
     }
 
-    def __init__(self, tape: list[str], position: List[int] | None = None,
-                 blank_symbol: str = ' ') -> None:
+    def __init__(self, tape: TapeType2dType, position: Optional[Position2dInputType] = None,
+                 blank_symbol: SymbolType = ' ') -> None:
 
         self.tape = {}
         if position is None:
-            super().__init__(np.zeros((2), np.int_))
+            self.position = np.zeros((2), np.int_)
         else:
-            super().__init__(np.array(position))
+            self.position = np.array(position)
         self.blank_symbol = blank_symbol
 
         for i, line in enumerate(tape):
@@ -196,8 +190,7 @@ class Tape2d(TapeMixin):
 
         return f"{cls.__name__}({', '.join(content)})"
 
-    def __getitem__(self, position: npt.NDArray[np.int_]):
-        # str_position = str(position)[1:-1]
+    def __getitem__(self, position: Position2dType):
         str_position = f"{position[0]} {position[1]}"
 
         if str_position in self.tape:
@@ -205,8 +198,7 @@ class Tape2d(TapeMixin):
 
         return self.blank_symbol
 
-    def __setitem__(self, position: npt.NDArray[np.int_], value):
-        # str_position = str(position)[1:-1]
+    def __setitem__(self, position: Position2dType, value):
         str_position = f"{position[0]} {position[1]}"
 
         if value == self.blank_symbol:
@@ -230,12 +222,28 @@ class Tape2d(TapeMixin):
 
         return str_tape
 
+    def read_pointer(self) -> str:
+        """Read the tape head char"""
+
+        return self[self.position]
+
+    def do_instruction(self, instruction: Instruction):
+        """Execute an instruction of turing machine"""
+
+        if instruction.write is not None:
+            self[self.position] = instruction.write
+
+        if instruction.direction not in self.DIRECTIONS:
+            raise UnexpectedDirection(f"Unexpected direction: \"{instruction.direction}\"")
+
+        self.position += self.DIRECTIONS[instruction.direction]
+
 
 class MachineConfiguration:
     """Configuration of turing machine"""
 
-    def __init__(self, states: dict[str, dict[str, str | List[str | int]]],
-            start_state: str, else_sign: str|None = None) -> None:
+    def __init__(self, states: StatesInputType, start_state: StateType,
+                 else_sign: Optional[SymbolType] = None) -> None:
         if start_state not in states:
             raise UnexpectedState(
                 f"Expected state \"{start_state}\" in states, but no found")
@@ -248,7 +256,7 @@ class MachineConfiguration:
         cls = self.__class__
         return f"{cls.__name__}(dict(...), {self.start_state!r}, {self.else_sign!r})"
 
-    def get_instruction(self, state: str, char: str) -> Instruction:
+    def get_instruction(self, state: StateType, char: str) -> Instruction:
         """Get instruction of configuration by state and tape head char"""
 
         if state not in self.states:
@@ -272,7 +280,8 @@ class MachineConfiguration:
 class Machine:
     """Instance of turing machine"""
 
-    def __init__(self, configuration: MachineConfiguration, tapes: List[Tape]) -> None:
+    def __init__(self, configuration: MachineConfiguration,
+                 tapes: Union[List[Tape], List[Tape2d]]) -> None:
         self.configuration = configuration
         self.tapes = tapes
         self.state: str = configuration.start_state
@@ -281,7 +290,7 @@ class Machine:
         cls = self.__class__
         return f"{cls.__name__}({self.configuration!r}, {self.tapes!r})"
 
-    def step(self, tape: TapeMixin):
+    def step(self, tape: Union[Tape, Tape2d]):
         """Do a machine step"""
 
         char = tape.read_pointer()
@@ -311,10 +320,3 @@ def parse_json_machine(filepath: str, encoding: str = "utf-8") -> Machine:
         raise JSONDecodeError("The file has some json error") from exception
 
     return generate_machine_from_dict(data)
-
-def _generate_tape(_type, tape, position: PositionInputType|None, blank_symbol: str) -> TapeMixin:
-    if _type == '2d':
-        if isinstance(position, str):
-            raise TypeError("Unexpected position got int, expected List[int]")
-        return Tape2d(tape, position, blank_symbol)
-    return Tape(tape, position, blank_symbol)
