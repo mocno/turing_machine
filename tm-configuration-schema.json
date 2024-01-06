@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "./tm-configuration-schema.json",
+
+  "title": "TM-Configuration",
+  "description": "Turing Machine Configuration",
+  "type": "object",
+
+  "properties": {
+    "type": {
+      "default": "tape",
+      "enum": ["tape", "2d"],
+      "title": "Type of machine"
+    },
+    "start-state": {
+      "title": "Initial state of the machine",
+      "type": "string"
+    },
+    "blank-symbol": {
+      "title": "Empty character of the tape",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1
+    },
+    "states": {
+      "type": "object",
+      "title": "Transition function",
+      "description": "The rules of the machine to move and edit",
+      "patternProperties": {
+        "": {
+          "type": "object",
+          "patternProperties": {
+            "": {
+              "type": ["string", "array"],
+              "items": {
+                "type": "string"
+              },
+              "minItems": 2,
+              "maxItems": 3,
+              "minLength": 1,
+              "maxLength": 1
+            }
+          }
+        }
+      },
+      "minProperties": 1
+    },
+    "inputs": {
+      "type": "array",
+      "title": "Input tapes to the machine",
+      "items": {
+        "type": "object",
+        "properties": {
+          "tape": {
+            "type": ["string", "array"],
+            "items": {
+              "type": "string"
+            }
+          },
+          "position": {
+            "type": ["integer", "array"],
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "required": ["tape"]
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["start-state", "states", "inputs"]
+}

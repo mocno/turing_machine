@@ -1,4 +1,5 @@
 {
+    "$schema": "../tm-configuration-schema.json",
     "type": "2d",
     "start-state": "go(DR,verify=DR)",
     "blank-symbol": " ",

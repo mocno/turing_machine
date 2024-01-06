@@ -1,4 +1,6 @@
 {
+    "$schema": "../tm-configuration-schema.json",
+
     "start-state": "right",
     "blank-symbol": " ",
     "else-sign": "*",
@@ -6,7 +8,7 @@
     "states": {
         "right": {
             " ": ["L", "carry", " "],
-            "*": ["R"]
+            "*": "R"
         },
         "carry": {
             "1": ["L", "carry", "0"],

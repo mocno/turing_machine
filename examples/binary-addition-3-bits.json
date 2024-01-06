@@ -1,4 +1,6 @@
 {
+    "$schema": "../tm-configuration-schema.json",
+
     "start-state": "right",
     "blank-symbol": " ",
     "else-sign": "*",
