@@ -1,6 +1,6 @@
 # turing_machine
 
-Esse projeto é um simulador da máquina de turing, configurado por um json. POssibilitando o uso de uma fita simples e infinita ou uma fita bidimensional e infinita. A intenção desse repositório não é explicar o que é uma máquina de turing, mas buscar simula-la de uma forma facilitada.
+Esse projeto é um simulador da máquina de turing, configurado por um json. É possível o uso de uma fita simples e infinita ou uma fita bidimensional e infinita. A intenção desse repositório não é explicar o que é uma máquina de turing, mas buscar simula-la de uma forma facilitada.
 
 Este projeto é inspirado em: https://turingmachine.io/
 
