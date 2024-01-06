@@ -1,6 +1,6 @@
 # turing_machine
 
-Esse projeto é um simulador da máquina de turing, configurado por um json. É possível o uso de uma fita simples e infinita ou uma fita bidimensional e infinita. A intenção desse repositório não é explicar o que é uma máquina de turing, mas buscar simula-la de uma forma facilitada.
+Esse projeto é um simulador da máquina de Turing, configurado por um json. É possível o uso de uma fita simples e infinita ou uma fita bidimensional e infinita. A intenção desse repositório não é explicar o que é uma máquina de Turing, mas buscar simula-la de uma forma facilitada.
 
 Este projeto é inspirado em: https://turingmachine.io/
 
@@ -11,7 +11,7 @@ Crie um ambiente virtual e baixe as dependências:
 python -m venv .venv
 ./.venv/bin/python -m pip install -r requirements.txt
 ```
-Depois disso, use como quiser a CLI para executar programas usando a máquina de turing, os exemplos podem ajudar bastante no começo. Para executar um exemplo, use:
+Depois disso, use como quiser a CLI para executar programas usando a máquina de Turing, os exemplos podem ajudar bastante no começo. Para executar um exemplo, use:
 
 ```shell
 ./.venv/bin/python ./cli.py ./examples/binary-addition.json 2 --delay .1
@@ -19,7 +19,7 @@ Depois disso, use como quiser a CLI para executar programas usando a máquina de
 ./.venv/bin/python ./cli.py ./examples/2d-ping-pong.json 1 --delay .1
 ```
 
-![Representation of 2d turing machine running](src/image-2d-ping-pong.json-index-1.png)
+![Representation of 2d Turing machine running](src/image-2d-ping-pong.json-index-1.png)
 
 ### Configurando a máquina
 
