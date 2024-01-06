@@ -1,16 +1,16 @@
 """Types of this turing machine"""
 
-from typing import List, Literal, Optional, Tuple, TypeAlias, TypedDict, Union
+from typing import Dict, List, Literal, Optional, Tuple, TypedDict, Union
 
 import numpy as np
 import numpy.typing as npt
 
-StateType: TypeAlias = str
-SymbolType: TypeAlias = str
+StateType = str
+SymbolType = str
 DirectionType = Union[Literal["R"], Literal["L"], Literal["D"], Literal["U"]]
-SymbolsType: TypeAlias = str
+SymbolsType = str
 
-PositionTapeInputType: TypeAlias = int
+PositionTapeInputType = int
 Position2dInputType = List[int]
 PositionInputType = Union[PositionTapeInputType, Position2dInputType]
 
@@ -32,7 +32,7 @@ class Input2dType(TypedDict):
     position: Position2dInputType
 
 InstructionInputType = Union[DirectionType, Tuple[DirectionType, StateType, SymbolType]]
-StatesInputType = dict[StateType, dict[SymbolsType, InstructionInputType]]
+StatesInputType = Dict[StateType, Dict[SymbolsType, InstructionInputType]]
 InputsType = List[Union[InputTapeType, Input2dType]]
 
 MachineTypeTapeConfigurationType = TypedDict('MachineConfigurationType', {
